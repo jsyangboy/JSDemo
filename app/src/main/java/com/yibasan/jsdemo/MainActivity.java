@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //dialog.show();
                 Log.e("yqy","setOnClickListener");
-                webView.loadUrl("javascript:log('hahah')");
+                webView.loadUrl("javascript:LZGLJSBridge.on('heihei','bbbcccdd')");
                 //webView.loadUrl("javascript:LZGLJSBridge.on('name',test)");
                 //webView.loadUrl("javascript:callH5('Android给H5传递的参数')");
                 //webView.loadUrl("javascript:javaCallJs(" + "'test'"+")");
