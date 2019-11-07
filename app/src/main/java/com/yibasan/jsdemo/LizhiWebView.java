@@ -194,30 +194,30 @@ public class LizhiWebView extends FrameLayout {
     private class LizhiJsInterface {
 
         @JavascriptInterface
-        public String userSession() {
-            Log.e("yqy", "userSession");
-            return " @JavascriptInterface";
-        }
-
-        @JavascriptInterface
-        public String makeRecord() {
-            Log.e("yqy", "makeRecord");
-            return "getMakeRecord";
-        }
-
-        @JavascriptInterface
         public void closeWebView() {
             Log.e("yqy", "closeWebView");
         }
 
         @JavascriptInterface
-        public void reportEvent(String evnetId, String lebal) {
-            Log.e("yqy", "reportEvent");
+        public void reportEvent(String result) {
+            Log.e("yqy", "reportEvent:result=" + result);
         }
 
         @JavascriptInterface
-        public void onMakeRecord(String orderId, String result, String errMsg) {
-            Log.e("yqy", "onMakeRecord");
+        public String getUserSession() {
+            Log.e("yqy", "getUserSession");
+            return "@JavascriptInterface";
+        }
+
+        @JavascriptInterface
+        public String getMakeRecord() {
+            Log.e("yqy", "getMakeRecord");
+            return "getMakeRecord";
+        }
+
+        @JavascriptInterface
+        public void onMakeRecord(String result) {
+            Log.e("yqy", "onMakeRecord:result=" + result);
         }
 
         @JavascriptInterface

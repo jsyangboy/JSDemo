@@ -7,7 +7,26 @@
 <body>
 <div id="content"> 请在上方输入您的用户名</div>
 
-<input type="button" value="点击调用Android_log接口" onclick="LZGLJSBridge.on('add','bc')"/>
+<input type="button" value="点击调用Android_on接口" onclick="LZGLJSBridge.on('LZGLNativeNotification',function(ret) {})"/>
+
+<input type="button" value="closeWebView接口"
+       onclick="LZGLJSBridge.call('closeWebView',{},function(ret) {})"/>
+
+<input type="button" value="reportEvent接口"
+       onclick="LZGLJSBridge.call('reportEvent','test',function(ret) {})"/>
+
+<input type="button" value="getUserSession接口"
+       onclick="LZGLJSBridge.call('getUserSession',{},function(ret) {
+        LZGLJSBridge.call('log',ret)
+       })"/>
+
+<input type="button" value="getMakeRecord接口"
+       onclick="LZGLJSBridge.call('getMakeRecord',{},function(ret) {
+          LZGLJSBridge.call('log',ret)
+       })"/>
+
+<input type="button" value="onMakeRecord接口"
+       onclick="LZGLJSBridge.call('onMakeRecord',{'orderId': '28374289473247538','result':'success','errMsg':'xx'},function(ret) {})"/>
 
 </body>
 </html>
