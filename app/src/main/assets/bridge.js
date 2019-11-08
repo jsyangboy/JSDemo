@@ -8,10 +8,8 @@
                         if (e.detail) {
                             var detail = e.detail;
                             var id = isNaN(parseInt(detail.id)) ? -1 : parseInt(detail.id)
-                             JsBridge.log('id='+id);
                             if (id != -1) {
                                 callbacks[id] && callbacks[id](detail.ret);
-                                JsBridge.log('detail.ret='+detail.ret);
                                 delete callbacks[id];
                             }
                         }
@@ -43,7 +41,7 @@
                 'callback':function(value){
                     JsBridge.log(value);
 
-                    var event = new CustomEvent('LZGLNativeCallback', {"detail":{"ret":{"param2":"value2","param1":"value1"},"id":0}});
+                    var event = new CustomEvent('LZGLNativeCallback', JSON.parse(value));
                     document.dispatchEvent(event)
                 },
                 'on':function(name, callback){

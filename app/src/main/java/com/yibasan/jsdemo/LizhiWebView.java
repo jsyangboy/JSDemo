@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -19,11 +18,15 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LizhiWebView extends FrameLayout {
     public LizhiWebView(@NonNull Context context) {
@@ -217,22 +220,7 @@ public class LizhiWebView extends FrameLayout {
                     break;
                 default:
                     Log.e("yqy", "postMessage:method=" + method + ",params=" + params + ",callBack=" + callback);
-
-                    String val = "{\"detail\":{\"ret\":{\"param2\":\"value2\",\"param1\":\"value1\"},\"id\":" + callback + "}}";
-                    final String js = "LZGLJSBridge.callback('" + val + "')";
-                    // String js = "(function() { var event = new CustomEvent(\'LZGLNativeCallback\', {\"detail\":{\"ret\":{\"param2\":\"value2\",\"param1\":\"value1\"},\"id\":0}}); document.dispatchEvent(event)}());";
-                    webView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            webView.evaluateJavascript(js, new ValueCallback<String>() {
-                                @Override
-                                public void onReceiveValue(String s) {
-
-                                }
-                            });
-                        }
-                    });
-
+                    callBack(callback);
                     break;
             }
         }
@@ -262,6 +250,49 @@ public class LizhiWebView extends FrameLayout {
         @JavascriptInterface
         public void log(String msg) {
             Log.e("yqy", "log:msg=" + msg);
+        }
+
+        private void callBack(int callback) {
+
+
+            Gson gson = new Gson();
+
+            Bean bean = new Bean(callback);
+            bean.put("param1", "value1");
+
+            String val = gson.toJson(bean);
+            Log.e("yqy", "data=" + val);
+
+            final String js = "LZGLJSBridge.callback('" + val + "')";
+            webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    webView.evaluateJavascript(js, new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String s) {
+                            Log.e("yqy", "onReceiveValue s=" + s);
+                        }
+                    });
+                }
+            });
+
+
+        }
+    }
+
+
+    private class Bean {
+        private Map<String, Object> detail;
+
+        public Bean(int id) {
+            detail = new HashMap<>();
+            detail.put("id", id);
+            detail.put("ret", new HashMap<String, String>());
+        }
+
+        public void put(String key, String val) {
+            Map<String, String> ret = (Map<String, String>) detail.get("ret");
+            ret.put(key, val);
         }
     }
 }
