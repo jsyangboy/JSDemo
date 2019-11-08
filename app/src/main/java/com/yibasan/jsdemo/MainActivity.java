@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -37,8 +38,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //dialog.show();
-                Log.e("yqy","setOnClickListener");
-                webView.loadUrl("javascript:LZGLJSBridge.on('heihei','bbbcccdd')");
+                Log.e("yqy", "setOnClickListener");
+                //webView.loadUrl("javascript:LZGLJSBridge.on('heihei','bbbcccdd')");
+                //webView.loadUrl("javascript:LZGLJSBridge.on('heihei','bbbcccdd')");
+
+                //String js = "(function() { var event = new CustomEvent(\'LZGLNativeCallback\', {\"detail\":{\"ret\":{\"param2\":\"value2\",\"param1\":\"value1\"},\"id\":0}}); document.dispatchEvent(event)}());";
+                String js = "LZGLJSBridge.on('heihei','bbbcccdd')";
+                Log.e("yqy", "js=" + js);
+                //webView.loadUrl(js);
+                webView.evaluateJavascript(js, new ValueCallback() {
+                    @Override
+                    public void onReceiveValue(Object o) {
+                        Log.i("yqy", "onReceiveValue o=" + o);
+                    }
+                });
                 //webView.loadUrl("javascript:LZGLJSBridge.on('name',test)");
                 //webView.loadUrl("javascript:callH5('Android给H5传递的参数')");
                 //webView.loadUrl("javascript:javaCallJs(" + "'test'"+")");
@@ -52,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         webView = new LizhiWebView(this);
         frameLayout.addView(webView);
         //webView.loadUrl("https://www.jianshu.com/p/e8eeec4e8d71");
-        webView.loadUrl("file:///android_asset/JavaAndJavaScriptCall.html");
+        webView.loadUrl("file:///android_asset/index.html");
+        //webView.loadUrl("file:///android_asset/JavaAndJavaScriptCall.html");
     }
 
 

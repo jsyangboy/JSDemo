@@ -8,8 +8,10 @@
                         if (e.detail) {
                             var detail = e.detail;
                             var id = isNaN(parseInt(detail.id)) ? -1 : parseInt(detail.id)
+                             JsBridge.log('id='+id);
                             if (id != -1) {
                                 callbacks[id] && callbacks[id](detail.ret);
+                                JsBridge.log('detail.ret='+detail.ret);
                                 delete callbacks[id];
                             }
                         }
@@ -32,28 +34,17 @@
 
             return {
                 'call':function(method ,params, callback){
-                    switch(method){
-                        case 'closeWebView':
-                            JsBridge.closeWebView();
-                        break;
-                        case 'reportEvent':
-                            JsBridge.reportEvent(params);
-                            break;
-                        case 'getUserSession':
-                            var userJsonData = JsBridge.getUserSession();
-                            callback(userJsonData);
-                            break;
-                        case 'getMakeRecord':
-                            var makeJsonData = JsBridge.getMakeRecord();
-                            callback(makeJsonData);
-                            break;
-                        case 'onMakeRecord':
-                            JsBridge.onMakeRecord(params);
-                            break;
-                        case 'log':
-                            JsBridge.log(params);
-                            break;
-                    }
+                    var id = callbackID++;
+                    callbacks[id] = callback;
+
+                    JsBridge.log("id="+id);
+                    JsBridge.postMessage(method,params,id);
+                },
+                'callback':function(value){
+                    JsBridge.log(value);
+
+                    var event = new CustomEvent('LZGLNativeCallback', {"detail":{"ret":{"param2":"value2","param1":"value1"},"id":0}});
+                    document.dispatchEvent(event)
                 },
                 'on':function(name, callback){
                      var namedListeners = registerHandlers[name]
@@ -71,5 +62,4 @@
     }()
 
 );
-
 

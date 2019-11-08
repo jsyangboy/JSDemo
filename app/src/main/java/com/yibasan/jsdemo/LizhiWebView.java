@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
-import java.net.URI;
 
 public class LizhiWebView extends FrameLayout {
     public LizhiWebView(@NonNull Context context) {
@@ -189,35 +188,75 @@ public class LizhiWebView extends FrameLayout {
         webView.loadUrl(s);
     }
 
+    public void evaluateJavascript(String js, ValueCallback valueCallback) {
+        webView.evaluateJavascript(js, valueCallback);
+    }
+
 
     @SuppressLint("JavascriptInterface")
     private class LizhiJsInterface {
 
         @JavascriptInterface
-        public void closeWebView() {
-            Log.e("yqy", "closeWebView");
+        public void postMessage(String method, String params, int callback) {
+
+            switch (method) {
+                case "closeWebView":
+                    closeWebView(params, callback);
+                    break;
+                case "reportEvent":
+                    reportEvent(params, callback);
+                    break;
+                case "getUserSession":
+                    getUserSession(params, callback);
+                    break;
+                case "getMakeRecord":
+                    getMakeRecord(params, callback);
+                    break;
+                case "onMakeRecord":
+                    onMakeRecord(params, callback);
+                    break;
+                default:
+                    Log.e("yqy", "postMessage:method=" + method + ",params=" + params + ",callBack=" + callback);
+
+                    String val = "{\"detail\":{\"ret\":{\"param2\":\"value2\",\"param1\":\"value1\"},\"id\":" + callback + "}}";
+                    final String js = "LZGLJSBridge.callback('" + val + "')";
+                    // String js = "(function() { var event = new CustomEvent(\'LZGLNativeCallback\', {\"detail\":{\"ret\":{\"param2\":\"value2\",\"param1\":\"value1\"},\"id\":0}}); document.dispatchEvent(event)}());";
+                    webView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            webView.evaluateJavascript(js, new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String s) {
+
+                                }
+                            });
+                        }
+                    });
+
+                    break;
+            }
         }
 
-        @JavascriptInterface
-        public void reportEvent(String result) {
-            Log.e("yqy", "reportEvent:result=" + result);
+        public void closeWebView(String params, int callback) {
+            Log.e("yqy", "closeWebView:params=" + params + ",callBack=" + params);
         }
 
-        @JavascriptInterface
-        public String getUserSession() {
-            Log.e("yqy", "getUserSession");
+        public void reportEvent(String params, int callback) {
+            Log.e("yqy", "reportEvent:params=" + params + ",callBack=" + params);
+        }
+
+        public String getUserSession(String params, int callback) {
+            Log.e("yqy", "getUserSession:params=" + params + ",callBack=" + params);
             return "@JavascriptInterface";
         }
 
-        @JavascriptInterface
-        public String getMakeRecord() {
-            Log.e("yqy", "getMakeRecord");
+        public String getMakeRecord(String params, int callback) {
+            Log.e("yqy", "getMakeRecord:params=" + params + ",callBack=" + params);
             return "getMakeRecord";
         }
 
-        @JavascriptInterface
-        public void onMakeRecord(String result) {
-            Log.e("yqy", "onMakeRecord:result=" + result);
+        public void onMakeRecord(String params, int callback) {
+            Log.e("yqy", "onMakeRecord:params=" + params + ",callBack=" + params);
         }
 
         @JavascriptInterface
